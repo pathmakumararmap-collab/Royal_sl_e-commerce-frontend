@@ -1,0 +1,118 @@
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+
+export const AUTH_TOKEN_COOKIE = "royal_sl_token";
+export const AUTH_TOKEN_STORAGE_KEY = "royal-sl-auth";
+export const CART_TOKEN_STORAGE_KEY = "royal-sl-cart-token";
+
+export const API_ENDPOINTS = {
+  auth: {
+    register: "/auth/register",
+    login: "/auth/login",
+    logout: "/auth/logout",
+    me: "/auth/me",
+    forgotPassword: "/auth/forgot-password",
+    resetPassword: "/auth/reset-password",
+  },
+  catalog: {
+    products: "/catalog/products",
+    product: (slug: string) => `/catalog/products/${slug}`,
+    categories: "/catalog/categories",
+    brands: "/catalog/brands",
+    reviews: (productId: number) => `/catalog/products/${productId}/reviews`,
+    myReview: (productId: number) => `/catalog/products/${productId}/reviews/mine`,
+  },
+  cart: {
+    show: "/cart",
+    items: "/cart/items",
+    item: (id: number) => `/cart/items/${id}`,
+  },
+  customer: {
+    profile: "/customer/profile",
+    addresses: "/customer/addresses",
+    address: (id: number) => `/customer/addresses/${id}`,
+    checkout: "/customer/checkout",
+    orders: "/customer/orders",
+    order: (id: number) => `/customer/orders/${id}`,
+    cancelOrder: (id: number) => `/customer/orders/${id}/cancel`,
+  },
+  admin: {
+    contentImages: "/admin/content-images",
+    products: "/admin/products",
+    product: (id: number) => `/admin/products/${id}`,
+    productBarcode: (id: number) => `/admin/products/${id}/barcode`,
+    productImage: (productId: number, imageId: number) =>
+      `/admin/products/${productId}/images/${imageId}`,
+    productVariant: (productId: number, variantId: number) =>
+      `/admin/products/${productId}/variants/${variantId}`,
+    reviews: "/admin/reviews",
+    approveReview: (id: number) => `/admin/reviews/${id}/approve`,
+    rejectReview: (id: number) => `/admin/reviews/${id}/reject`,
+    review: (id: number) => `/admin/reviews/${id}`,
+    categories: "/admin/categories",
+    category: (id: number) => `/admin/categories/${id}`,
+    brands: "/admin/brands",
+    brand: (id: number) => `/admin/brands/${id}`,
+    coupons: "/admin/coupons",
+    coupon: (id: number) => `/admin/coupons/${id}`,
+    users: "/admin/users",
+    user: (id: number) => `/admin/users/${id}`,
+    roles: "/admin/roles",
+    role: (id: number) => `/admin/roles/${id}`,
+    permissions: "/admin/permissions",
+    paymentMethods: "/admin/payment-methods",
+    paymentMethod: (id: number) => `/admin/payment-methods/${id}`,
+    activityLogs: "/admin/activity-logs",
+    orders: "/admin/orders",
+    orderFacebook: "/admin/orders/facebook",
+    order: (id: number) => `/admin/orders/${id}`,
+    orderStatus: (id: number) => `/admin/orders/${id}/status`,
+    orderCancel: (id: number) => `/admin/orders/${id}/cancel`,
+    orderPayments: (id: number) => `/admin/orders/${id}/payments`,
+    orderInvoice: (id: number) => `/admin/orders/${id}/invoice`,
+  },
+  pos: {
+    checkout: "/pos/checkout",
+    lookup: (barcode: string) => `/pos/lookup/${barcode}`,
+  },
+  inventory: {
+    warehouses: "/inventory/warehouses",
+    warehouse: (id: number) => `/inventory/warehouses/${id}`,
+    suppliers: "/inventory/suppliers",
+    supplier: (id: number) => `/inventory/suppliers/${id}`,
+    stock: "/inventory/stock",
+    lowStock: "/inventory/stock/low-stock",
+    movements: "/inventory/stock/movements",
+    purchases: "/inventory/purchases",
+    purchase: (id: number) => `/inventory/purchases/${id}`,
+    purchaseReceive: (id: number) => `/inventory/purchases/${id}/receive`,
+    purchaseCancel: (id: number) => `/inventory/purchases/${id}/cancel`,
+    stockTransfers: "/inventory/stock-transfers",
+    stockTransfer: (id: number) => `/inventory/stock-transfers/${id}`,
+    stockTransferReceive: (id: number) =>
+      `/inventory/stock-transfers/${id}/receive`,
+    stockAdjustments: "/inventory/stock-adjustments",
+    stockAdjustment: (id: number) => `/inventory/stock-adjustments/${id}`,
+    stockReturns: "/inventory/stock-returns",
+    stockReturn: (id: number) => `/inventory/stock-returns/${id}`,
+    damages: "/inventory/damages",
+    damage: (id: number) => `/inventory/damages/${id}`,
+  },
+  reports: {
+    sales: "/reports/sales",
+    orders: "/reports/orders",
+    products: "/reports/products",
+    stock: "/reports/stock",
+    movement: "/reports/movement",
+    movementExport: "/reports/movement/export",
+    movementThresholds: "/reports/movement/thresholds",
+  },
+  notifications: {
+    list: "/notifications",
+    read: (id: string) => `/notifications/${id}/read`,
+    readAll: "/notifications/read-all",
+  },
+  invoices: {
+    download: (id: number) => `/invoices/${id}/download`,
+  },
+} as const;
