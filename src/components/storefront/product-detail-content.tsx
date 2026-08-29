@@ -273,12 +273,12 @@ export function ProductDetailContent({ slug }: { slug: string }) {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div>
             <Currency value={price} className="tabular-nums text-3xl font-bold" />
             {product.discount_price && product.discount_price < product.selling_price && (
               <Currency
                 value={product.selling_price}
-                className="text-muted-foreground tabular-nums text-lg font-normal line-through"
+                className="text-muted-foreground tabular-nums mt-0.5 block text-base font-normal line-through"
               />
             )}
           </div>
@@ -419,25 +419,27 @@ export function ProductDetailContent({ slug }: { slug: string }) {
 
           <Button
             className="flex-1 rounded-full bg-[#FB6C00] text-white hover:bg-[#FB6C00]/90"
-            disabled={outOfStock || needsSelection || addItem.isPending}
-            onClick={handleBuyNow}
+            disabled={outOfStock || addItem.isPending}
+            onClick={() => (needsSelection ? setOptionSheetOpen(true) : handleBuyNow())}
           >
-            {outOfStock ? "Out of stock" : needsSelection ? "Select options" : "Buy Now"}
+            {outOfStock ? "Out of stock" : "Buy Now"}
           </Button>
 
           <Button
             className="flex-1 rounded-full"
-            disabled={outOfStock || needsSelection || addItem.isPending}
+            disabled={outOfStock || addItem.isPending}
             onClick={() =>
-              addItem.mutate({
-                product_id: product.id,
-                product_variant_id: selectedVariant?.id,
-                quantity,
-              })
+              needsSelection
+                ? setOptionSheetOpen(true)
+                : addItem.mutate({
+                    product_id: product.id,
+                    product_variant_id: selectedVariant?.id,
+                    quantity,
+                  })
             }
           >
             <ShoppingCart className="size-4" />
-            {outOfStock ? "Out of stock" : needsSelection ? "Select options" : "Add to cart"}
+            {outOfStock ? "Out of stock" : "Add to cart"}
           </Button>
         </div>
       </div>
@@ -449,7 +451,7 @@ export function ProductDetailContent({ slug }: { slug: string }) {
           from the "Product Option" thumbnails above. */}
       <Sheet open={optionSheetOpen} onOpenChange={setOptionSheetOpen}>
         <SheetContent side="bottom" className="max-h-[85vh] gap-0 overflow-y-auto rounded-t-2xl p-0 md:hidden">
-          <div className="flex items-center gap-3 p-4">
+          <div className="flex items-center gap-3 p-4 pr-10">
             <div className="bg-muted relative size-16 shrink-0 overflow-hidden rounded-lg">
               {mainImageUrl ? (
                 <Image src={mainImageUrl} alt={product.name} fill className="object-cover" />
@@ -461,6 +463,7 @@ export function ProductDetailContent({ slug }: { slug: string }) {
             </div>
             <div className="min-w-0 flex-1">
               <p className="line-clamp-2 text-sm font-medium">{product.name}</p>
+              <p className="text-muted-foreground text-xs">SKU: {selectedVariant?.sku ?? product.sku}</p>
               {product.brand && <p className="text-muted-foreground text-xs">{product.brand.name}</p>}
               {!!product.reviews_count && (
                 <div className="mt-1 flex items-center gap-1.5">
@@ -481,7 +484,7 @@ export function ProductDetailContent({ slug }: { slug: string }) {
 
           <Separator />
 
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="space-y-2 px-4 py-3">
             <p className="text-sm font-medium">Quantity</p>
             <div className="flex items-center gap-1">
               <Button
@@ -511,7 +514,7 @@ export function ProductDetailContent({ slug }: { slug: string }) {
                 handleBuyNow();
               }}
             >
-              {outOfStock ? "Out of stock" : needsSelection ? "Select options" : "Buy Now"}
+              {outOfStock ? "Out of stock" : "Buy Now"}
             </Button>
             <Button
               className="flex-1"
@@ -526,7 +529,7 @@ export function ProductDetailContent({ slug }: { slug: string }) {
               }}
             >
               <ShoppingCart className="size-4" />
-              {outOfStock ? "Out of stock" : needsSelection ? "Select options" : "Add to cart"}
+              {outOfStock ? "Out of stock" : "Add to cart"}
             </Button>
           </div>
         </SheetContent>
