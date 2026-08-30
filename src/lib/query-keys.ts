@@ -36,6 +36,9 @@ export const queryKeys = {
   catalogBrands: {
     all: ["catalog-brands"] as const,
   },
+  flashSale: {
+    all: ["flash-sale"] as const,
+  },
   brands: {
     all: ["admin-brands"] as const,
   },

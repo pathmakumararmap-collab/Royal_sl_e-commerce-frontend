@@ -83,8 +83,8 @@ export function OrderDetailContent({ orderId }: { orderId: number }) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <div className="space-y-6">
-          <Card>
+        <div className="min-w-0 space-y-6">
+          <Card className="min-w-0">
             <CardHeader>
               <CardTitle className="text-display text-lg">Items</CardTitle>
             </CardHeader>

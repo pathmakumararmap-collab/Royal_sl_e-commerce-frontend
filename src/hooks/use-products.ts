@@ -37,3 +37,11 @@ export function useBrands() {
     staleTime: 10 * 60 * 1000,
   });
 }
+
+export function useFlashSale() {
+  return useQuery({
+    queryKey: queryKeys.flashSale.all,
+    queryFn: () => catalogService.getFlashSale(),
+    staleTime: 60 * 1000,
+  });
+}

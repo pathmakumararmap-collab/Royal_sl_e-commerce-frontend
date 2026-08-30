@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/constants/api";
 import type { ApiResource, PaginatedResponse } from "@/types/common";
-import type { Brand, Category, Product, ProductFilters } from "@/types/catalog";
+import type { Brand, Category, FlashSaleResponse, Product, ProductFilters } from "@/types/catalog";
 
 export const catalogService = {
   async listProducts(
@@ -31,6 +31,13 @@ export const catalogService = {
   async listBrands(): Promise<Brand[]> {
     const { data } = await apiClient.get<ApiResource<Brand[]>>(
       API_ENDPOINTS.catalog.brands
+    );
+    return data.data;
+  },
+
+  async getFlashSale(): Promise<FlashSaleResponse> {
+    const { data } = await apiClient.get<ApiResource<FlashSaleResponse>>(
+      API_ENDPOINTS.catalog.flashSale
     );
     return data.data;
   },

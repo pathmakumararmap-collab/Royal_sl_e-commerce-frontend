@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
     brands: "/catalog/brands",
     reviews: (productId: number) => `/catalog/products/${productId}/reviews`,
     myReview: (productId: number) => `/catalog/products/${productId}/reviews/mine`,
+    flashSale: "/catalog/flash-sale",
   },
   cart: {
     show: "/cart",

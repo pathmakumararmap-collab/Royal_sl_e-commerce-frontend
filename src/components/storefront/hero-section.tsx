@@ -21,6 +21,7 @@ const MOBILE_HERO_SLIDES = [
   { src: "/images/hero-slide-1.png", alt: "New arrivals" },
   { src: "/images/hero-slide-2.png", alt: "Island-wide delivery" },
   { src: "/images/hero-slide-3.png", alt: "Secure checkout" },
+  { src: "/images/hero-slide-4.png", alt: "Fast delivery" },
 ];
 
 const AUTO_ADVANCE_MS = 4000;

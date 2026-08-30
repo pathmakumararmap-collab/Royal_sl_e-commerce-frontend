@@ -80,6 +80,16 @@ export interface ProductReview {
   created_at: string;
 }
 
+export interface FlashSaleProduct extends Product {
+  flash_sale_price: number;
+  flash_sale_discount_percent: number;
+}
+
+export interface FlashSaleResponse {
+  ends_at: string | null;
+  products: FlashSaleProduct[];
+}
+
 export interface ProductFilters {
   keyword?: string;
   category_id?: number;

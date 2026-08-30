@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { HeroSection } from "@/components/storefront/hero-section";
+import { FlashSaleSection } from "@/components/storefront/flash-sale-section";
 import { CategoryCard } from "@/components/storefront/category-card";
 import { ProductGrid } from "@/components/storefront/product-grid";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,8 @@ export function LandingContent() {
   return (
     <div className="pb-20">
       <HeroSection />
+
+      <FlashSaleSection />
 
       <section className="container-page py-14 sm:py-16">
         <div className="mb-8 flex items-end justify-between gap-4">
