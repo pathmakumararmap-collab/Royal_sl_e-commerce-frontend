@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Currency } from "@/components/shared/currency";
 import { StarRating } from "@/components/shared/star-rating";
 import { cn } from "@/lib/utils";
+import { useAddCartItem } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
 import type { Product } from "@/types/catalog";
 
 export function ProductCard({ product, className }: { product: Product; className?: string }) {
   const { has, toggle } = useWishlist();
   const isWishlisted = has(product.id);
+  const addItem = useAddCartItem();
 
   const primaryImage =
     product.images?.find((image) => image.is_primary)?.url ?? product.images?.[0]?.url;
@@ -61,24 +63,41 @@ export function ProductCard({ product, className }: { product: Product; classNam
               <Badge className="border-transparent bg-red-600 text-white">-{discountPercent}%</Badge>
             )}
             {product.is_featured && (
-              <Badge className="border-transparent bg-[#499A13] text-white">Featured</Badge>
+              <Badge className="border-transparent bg-[#0D47A1] text-white">Featured</Badge>
             )}
             {outOfStock && <Badge variant="secondary">Out of stock</Badge>}
           </div>
 
-          <Button
-            type="button"
-            size="icon-sm"
-            variant="secondary"
-            className="absolute top-2 right-2 rounded-full opacity-100 shadow-luxury-sm transition-opacity md:opacity-0 md:group-hover:opacity-100"
-            onClick={(event) => {
-              event.preventDefault();
-              toggle(product);
-            }}
-            aria-label="Toggle wishlist"
-          >
-            <Heart className={cn("size-4", isWishlisted && "fill-destructive text-destructive")} />
-          </Button>
+          <div className="absolute top-2 right-2 flex flex-col gap-1.5">
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="secondary"
+              className="rounded-full opacity-100 shadow-luxury-sm transition-opacity md:opacity-0 md:group-hover:opacity-100"
+              onClick={(event) => {
+                event.preventDefault();
+                toggle(product);
+              }}
+              aria-label="Toggle wishlist"
+            >
+              <Heart className={cn("size-4", isWishlisted && "fill-destructive text-destructive")} />
+            </Button>
+
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="secondary"
+              className="rounded-full opacity-100 shadow-luxury-sm transition-opacity md:opacity-0 md:group-hover:opacity-100"
+              disabled={outOfStock || addItem.isPending}
+              onClick={(event) => {
+                event.preventDefault();
+                addItem.mutate({ product_id: product.id, quantity: 1 });
+              }}
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="size-4" />
+            </Button>
+          </div>
         </div>
       </Link>
 
