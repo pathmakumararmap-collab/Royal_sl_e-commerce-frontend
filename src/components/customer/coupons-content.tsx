@@ -26,7 +26,6 @@ export function CouponsContent() {
       <PageHeader title="Coupons" description="Save on your next order with a discount code." />
 
       <div className="bg-gradient-brand-radiant relative overflow-hidden rounded-2xl px-6 py-10 sm:px-10 sm:py-14">
-        <div className="bg-gradient-mesh absolute inset-0 -z-10 opacity-60" aria-hidden />
         <div className="animate-float absolute -top-6 -right-6 hidden size-32 rounded-full bg-white/5 blur-2xl sm:block" aria-hidden />
         <div className="relative mx-auto max-w-lg text-center">
           <span className="bg-white/10 text-accent ring-white/15 mx-auto flex size-14 items-center justify-center rounded-2xl ring-1 backdrop-blur-sm">

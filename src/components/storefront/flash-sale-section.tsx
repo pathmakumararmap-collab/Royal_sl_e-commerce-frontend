@@ -110,65 +110,71 @@ export function FlashSaleSection() {
 
   return (
     <section className="container-page py-14 sm:py-16">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-8">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-display text-2xl tracking-tight sm:text-3xl">FLASH SALE</h2>
-            <Flame className="size-6 fill-orange-500 text-orange-500 sm:size-7" />
+      <div className="relative">
+        <div className="absolute -inset-4 -z-10 rounded-[0rem] bg-white-500 sm:-inset-6" />
+
+        <div className="bg-card border-border/60 shadow-luxury-sm rounded-2xl border p-4 sm:rounded-3xl sm:p-7">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4 sm:mb-8">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <h2 className="text-display text-2xl tracking-tight sm:text-3xl">FLASH SALE</h2>
+                <Flame className="size-6 fill-orange-500 text-orange-500 sm:size-7" />
+              </div>
+
+              {countdown && (
+                <div className="flex items-center gap-1.5">
+                  {(
+                    [
+                      ["HOURS", countdown.hours],
+                      ["MINUTES", countdown.minutes],
+                      ["SECONDS", countdown.seconds],
+                    ] as const
+                  ).map(([label, value], index) => (
+                    <React.Fragment key={label}>
+                      {index > 0 && <span className="text-lg font-bold">:</span>}
+                      <div className="text-center">
+                        <span className="block font-mono text-lg font-bold tabular-nums sm:text-2xl">
+                          {value}
+                        </span>
+                        <span className="text-muted-foreground hidden text-[9px] tracking-wide uppercase sm:block">
+                          {label}
+                        </span>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Link
+              href="/products?sort=latest"
+              className="text-muted-foreground hover:text-foreground flex shrink-0 items-center gap-1 text-sm font-medium transition-colors"
+            >
+              View all
+              <ArrowRight className="size-3.5" />
+            </Link>
           </div>
 
-          {countdown && (
-            <div className="flex items-center gap-1.5">
-              {(
-                [
-                  ["HOURS", countdown.hours],
-                  ["MINUTES", countdown.minutes],
-                  ["SECONDS", countdown.seconds],
-                ] as const
-              ).map(([label, value], index) => (
-                <React.Fragment key={label}>
-                  {index > 0 && <span className="text-lg font-bold">:</span>}
-                  <div className="text-center">
-                    <span className="block font-mono text-lg font-bold tabular-nums sm:text-2xl">
-                      {value}
-                    </span>
-                    <span className="text-muted-foreground hidden text-[9px] tracking-wide uppercase sm:block">
-                      {label}
-                    </span>
-                  </div>
-                </React.Fragment>
+          {isLoading ? (
+            <div className="flex gap-3 overflow-hidden">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  className={cn(
+                    "h-52 w-[calc((100%-1.5rem)/3)] shrink-0 rounded-2xl sm:h-64 sm:w-56"
+                  )}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex snap-x gap-3 overflow-x-auto pb-1 sm:gap-4">
+              {data?.products.map((product) => (
+                <FlashSaleCard key={product.id} product={product} />
               ))}
             </div>
           )}
         </div>
-
-        <Link
-          href="/products?sort=latest"
-          className="text-muted-foreground hover:text-foreground flex shrink-0 items-center gap-1 text-sm font-medium transition-colors"
-        >
-          View all
-          <ArrowRight className="size-3.5" />
-        </Link>
       </div>
-
-      {isLoading ? (
-        <div className="flex gap-3 overflow-hidden">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Skeleton
-              key={index}
-              className={cn(
-                "h-52 w-[calc((100%-1.5rem)/3)] shrink-0 rounded-2xl sm:h-64 sm:w-56"
-              )}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex snap-x gap-3 overflow-x-auto pb-1 sm:gap-4">
-          {data?.products.map((product) => (
-            <FlashSaleCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
     </section>
   );
 }

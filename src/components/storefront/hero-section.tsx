@@ -4,15 +4,65 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import {
+  ArrowRight,
+  Baby,
+  Dumbbell,
+  Laptop2,
+  Popcorn,
+  Shapes,
+  Shirt,
+  ShoppingCart,
+  Sofa,
+  Sparkles,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useCategories } from "@/hooks/use-products";
 import { cn } from "@/lib/utils";
+import type { Category } from "@/types/catalog";
 
-const HIGHLIGHTS = [
-  { icon: Truck, label: "Island-wide delivery" },
-  { icon: ShieldCheck, label: "Secure checkout" },
-  { icon: Sparkles, label: "New arrivals weekly" },
+const CATEGORY_ICON_RULES: { match: RegExp; icon: React.ComponentType<{ className?: string }> }[] = [
+  { match: /electronic|device|gadget/i, icon: Laptop2 },
+  { match: /fashion|apparel|cloth/i, icon: Shirt },
+  { match: /beauty|health|cosmetic/i, icon: Sparkles },
+  { match: /home|living|furniture/i, icon: Sofa },
+  { match: /sport|outdoor|fitness|gym/i, icon: Dumbbell },
+  { match: /grocery|groceries|food|essential/i, icon: ShoppingCart },
+  { match: /baby|kid|toy/i, icon: Baby },
+  { match: /snack|beverage/i, icon: Popcorn },
+];
+
+function iconForCategory(name: string) {
+  return CATEGORY_ICON_RULES.find((rule) => rule.match.test(name))?.icon ?? Shapes;
+}
+
+function CategorySidebar({ categories }: { categories: Category[] }) {
+  return (
+    <div className="bg-card border-border/60 shadow-luxury-sm hidden w-64 shrink-0 flex-col overflow-hidden rounded-2xl border md:flex">
+      {categories.slice(0, 8).map((category) => {
+        const Icon = iconForCategory(category.name);
+        return (
+          <Link
+            key={category.id}
+            href={`/products?category=${category.id}`}
+            className="hover:bg-muted border-border/40 text-foreground flex items-center gap-3 border-b px-4 py-3 text-sm transition-colors last:border-b-0"
+          >
+            <Icon className="text-muted-foreground size-4 shrink-0" />
+            {category.name}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+// Drop real banner photos into /public/images/ with these filenames (or
+// change the paths below) to replace the desktop hero banner images.
+const DESKTOP_HERO_SLIDES = [
+  { src: "/images/hero-banner-1.jpg", alt: "Shop smarter, live better" },
+  { src: "/images/hero-banner-2.jpg", alt: "New arrivals every week" },
+  { src: "/images/hero-banner-3.jpg", alt: "Island-wide delivery" },
 ];
 
 // Drop real banner photos into /public/images/ with these filenames (or
@@ -21,22 +71,27 @@ const MOBILE_HERO_SLIDES = [
   { src: "/images/hero-slide-1.png", alt: "New arrivals" },
   { src: "/images/hero-slide-2.png", alt: "Island-wide delivery" },
   { src: "/images/hero-slide-3.png", alt: "Secure checkout" },
-  { src: "/images/hero-slide-4.png", alt: "Fast delivery" },
 ];
 
 const AUTO_ADVANCE_MS = 4000;
 const SWIPE_THRESHOLD_PX = 40;
 
-function MobileHeroSlider() {
+function useAutoAdvance(length: number, intervalMs: number) {
   const [activeIndex, setActiveIndex] = React.useState(0);
-  const touchStartX = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
-      setActiveIndex((index) => (index + 1) % MOBILE_HERO_SLIDES.length);
-    }, AUTO_ADVANCE_MS);
+      setActiveIndex((index) => (index + 1) % length);
+    }, intervalMs);
     return () => clearInterval(timer);
-  }, []);
+  }, [length, intervalMs]);
+
+  return [activeIndex, setActiveIndex] as const;
+}
+
+function MobileHeroSlider() {
+  const [activeIndex, setActiveIndex] = useAutoAdvance(MOBILE_HERO_SLIDES.length, AUTO_ADVANCE_MS);
+  const touchStartX = React.useRef<number | null>(null);
 
   function handleTouchStart(event: React.TouchEvent) {
     touchStartX.current = event.touches[0].clientX;
@@ -102,65 +157,88 @@ function MobileHeroSlider() {
 }
 
 export function HeroSection() {
+  const { data: categories } = useCategories();
+  const [activeSlide, setActiveSlide] = useAutoAdvance(DESKTOP_HERO_SLIDES.length, AUTO_ADVANCE_MS);
+
   return (
     <section className="relative overflow-hidden">
-      <div className="bg-gradient-mesh absolute inset-0 -z-10" />
-      <div className="container-page grid gap-10 py-6 md:grid-cols-2 md:items-center md:py-28">
+      <div className="container-page py-6 md:py-10">
         <MobileHeroSlider />
 
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="stagger-children hidden space-y-6 md:block"
-        >
-          <span className="bg-gradient-gold text-accent-foreground inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold shadow-sm">
-            <Sparkles className="size-3.5" />
-            Sri Lanka&apos;s favourite online store
-          </span>
-          <h1 className="text-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
-            Everything you need,{" "}
-            <span className="text-gradient-brand">delivered to your door.</span>
-          </h1>
-          <p className="text-muted-foreground max-w-md text-lg text-pretty">
-            Shop electronics, fashion, groceries, home essentials and more — all in one
-            place, with island-wide delivery and secure payments.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Button size="lg" variant="gradient" asChild>
-              <Link href="/products">
-                Shop now
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/categories">Browse categories</Link>
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2">
-            {HIGHLIGHTS.map((item) => (
-              <div key={item.label} className="text-muted-foreground flex items-center gap-2 text-sm">
-                <item.icon className="text-primary size-4" />
-                {item.label}
-              </div>
-            ))}
-          </div>
-        </motion.div>
+        <div className="hidden gap-6 md:flex">
+          <CategorySidebar categories={categories ?? []} />
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="relative hidden aspect-square items-center justify-center md:flex"
-        >
-          <div className="from-primary/20 to-accent/20 absolute inset-6 rounded-full bg-gradient-to-br blur-3xl" />
-          <div className="animate-float border-border/60 bg-card/90 shadow-luxury-xl relative grid size-full grid-cols-2 grid-rows-2 gap-4 rounded-3xl border p-6 backdrop-blur-sm">
-            <div className="bg-primary/10 rounded-2xl" />
-            <div className="bg-gradient-gold rounded-2xl" />
-            <div className="bg-secondary rounded-2xl" />
-            <div className="bg-primary/15 rounded-2xl" />
-          </div>
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="border-border/60 shadow-luxury-sm relative min-h-[420px] flex-1 overflow-hidden rounded-2xl border"
+          >
+            {/* Drop real lifestyle/banner photos at these paths (any aspect
+                ratio — each fills the banner via object-cover). */}
+            <AnimatePresence initial={false} mode="wait">
+              <motion.div
+                key={activeSlide}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={DESKTOP_HERO_SLIDES[activeSlide].src}
+                  alt={DESKTOP_HERO_SLIDES[activeSlide].alt}
+                  fill
+                  sizes="(min-width: 768px) 70vw, 100vw"
+                  className="object-cover"
+                  priority={activeSlide === 0}
+                />
+              </motion.div>
+            </AnimatePresence>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
+
+            <div className="stagger-children relative flex h-full max-w-lg flex-col justify-center gap-5 p-10 lg:p-14">
+              <h1 className="text-display text-4xl leading-[1.05] text-white lg:text-5xl">
+                Shop Smarter. Live Better.
+              </h1>
+              <p className="max-w-md text-base text-pretty text-white/85">
+                Everything you love, all in one place. Discover premium products curated for
+                the modern Sri Lankan lifestyle.
+              </p>
+              <div className="flex flex-wrap gap-3 pt-1">
+                <Button size="lg" variant="gradient" asChild>
+                  <Link href="/products">
+                    Shop now
+                    <ArrowRight className="size-4" />
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-white/70 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                  asChild
+                >
+                  <Link href="/products?sort=latest">Explore deals</Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="absolute right-6 bottom-6 flex items-center gap-1.5">
+              {DESKTOP_HERO_SLIDES.map((slide, index) => (
+                <button
+                  key={slide.src}
+                  type="button"
+                  aria-label={`Show slide ${index + 1}`}
+                  onClick={() => setActiveSlide(index)}
+                  className={cn(
+                    "h-1.5 rounded-full shadow-sm transition-all",
+                    index === activeSlide ? "bg-white w-6" : "bg-white/50 w-1.5"
+                  )}
+                />
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

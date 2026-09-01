@@ -7,6 +7,7 @@ export interface Category {
   image: string | null;
   is_active: boolean;
   sort_order: number;
+  products_count?: number;
   children?: Category[];
 }
 

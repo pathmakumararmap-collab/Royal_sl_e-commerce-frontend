@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -34,26 +33,50 @@ interface ProductFiltersProps {
 }
 
 function FilterFields({ categories, brands, filters, onChange }: ProductFiltersProps) {
+  const selectedCategoryId = filters.categoryId ? String(filters.categoryId) : "all";
+
   return (
     <div className="space-y-6">
       <div className="space-y-3">
         <Label className="text-sm font-semibold">Category</Label>
         <RadioGroup
-          value={filters.categoryId ? String(filters.categoryId) : "all"}
+          value={selectedCategoryId}
           onValueChange={(value) =>
             onChange({ ...filters, categoryId: value === "all" ? undefined : Number(value) })
           }
         >
           <div className="flex items-center gap-2">
             <RadioGroupItem value="all" id="cat-all" />
-            <Label htmlFor="cat-all" className="text-sm font-normal">All categories</Label>
+            <Label htmlFor="cat-all" className="text-sm font-normal">
+              All categories
+            </Label>
           </div>
+
           {categories.map((category) => (
-            <div key={category.id} className="flex items-center gap-2">
-              <RadioGroupItem value={String(category.id)} id={`cat-${category.id}`} />
-              <Label htmlFor={`cat-${category.id}`} className="text-sm font-normal">
-                {category.name}
-              </Label>
+            <div key={category.id} className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value={String(category.id)} id={`cat-${category.id}`} />
+                <Label htmlFor={`cat-${category.id}`} className="text-sm font-normal">
+                  {category.name}
+                </Label>
+              </div>
+
+              {/* Sub-categories, nested under their parent */}
+              {!!category.children?.length && (
+                <div className="border-border/60 ml-2.5 space-y-1.5 border-l pl-3.5">
+                  {category.children.map((subCategory) => (
+                    <div key={subCategory.id} className="flex items-center gap-2">
+                      <RadioGroupItem value={String(subCategory.id)} id={`cat-${subCategory.id}`} />
+                      <Label
+                        htmlFor={`cat-${subCategory.id}`}
+                        className="text-muted-foreground text-sm font-normal"
+                      >
+                        {subCategory.name}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </RadioGroup>
@@ -63,22 +86,27 @@ function FilterFields({ categories, brands, filters, onChange }: ProductFiltersP
 
       <div className="space-y-3">
         <Label className="text-sm font-semibold">Brand</Label>
-        <div className="space-y-2">
+        <RadioGroup
+          value={filters.brandId ? String(filters.brandId) : "all"}
+          onValueChange={(value) =>
+            onChange({ ...filters, brandId: value === "all" ? undefined : Number(value) })
+          }
+        >
+          <div className="flex items-center gap-2">
+            <RadioGroupItem value="all" id="brand-all" />
+            <Label htmlFor="brand-all" className="text-sm font-normal">
+              All brands
+            </Label>
+          </div>
           {brands.map((brand) => (
             <div key={brand.id} className="flex items-center gap-2">
-              <Checkbox
-                id={`brand-${brand.id}`}
-                checked={filters.brandId === brand.id}
-                onCheckedChange={(checked) =>
-                  onChange({ ...filters, brandId: checked ? brand.id : undefined })
-                }
-              />
+              <RadioGroupItem value={String(brand.id)} id={`brand-${brand.id}`} />
               <Label htmlFor={`brand-${brand.id}`} className="text-sm font-normal">
                 {brand.name}
               </Label>
             </div>
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
       <Separator />
